@@ -19,18 +19,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.5
+        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
         with:
           fetch-depth: 0
       - name: Install Helm
-        uses: azure/setup-helm@v3.5
+        uses: azure/setup-helm@fe7b79cd5ee1e45176fcad797de68ecaf3ca4814 # v4.2.0
         with:
           version: v3.14.4 # renovate: datasource=github-releases depName=helm packageName=helm/helm
-      - uses: actions/setup-python@v4.8.0
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version-file: .python-version
       - name: Install chart-testing
-        uses: helm/chart-testing-action@v2.6.1
+        uses: helm/chart-testing-action@e6669bcd63d7cb57cb4380c33043eebe5d111992 # v2.6.1
         with:
           version: v3.11.0 # renovate: datasource=github-releases depName=chart-testing packageName=helm/chart-testing
       - name: Run lint
@@ -41,7 +41,7 @@ jobs:
     needs: lint-chart
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.5
+        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
       - name: Run helm-docs
         run: .github/helm-docs.sh
   
@@ -60,7 +60,7 @@ jobs:
           - v1.29.0
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.5
+        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
         with:
           fetch-depth: 0
       - name: Run kubeval
@@ -86,17 +86,17 @@ jobs:
           - v1.29.2 # renovate: kindest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.5
+        uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
         with:
           fetch-depth: 0
       - name: Create kind ${{ matrix.k8s }} cluster
-        uses: helm/kind-action@v1.10.0
+        uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
         with:
           node_image: kindest/node:${{ matrix.k8s }}
           version: v0.22.0 # renovate: datasource=github-releases depName=kind packageName=kubernetes-sigs/kind
       
       - name: Install chart-testing
-        uses: helm/chart-testing-action@v2.6.1
+        uses: helm/chart-testing-action@e6669bcd63d7cb57cb4380c33043eebe5d111992 # v2.6.1
         with:
           version: v3.11.0 # renovate: datasource=github-releases depName=chart-testing packageName=helm/chart-testing
 
