@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dragonfly-operator.fullname" . }}
+  namespace: {{ include "dragonfly-operator.namespace" . }}
+  labels:
+    {{- include "dragonfly-operator.labels" . | nindent 4 }}
+    control-plane: controller-manager
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      control-plane: controller-manager
+  template:
+    metadata:
+      annotations:
+        {{- if .Values.podAnnotations -}}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+        {{- end }}
+      labels:
+        control-plane: controller-manager
+        {{- if .Values.podLabels -}}
+        {{- toYaml .Values.podLabels | nindent 8 }}
+        {{- end }}
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
+                - ppc64le
+                - s390x
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
+      serviceAccountName: {{ include "dragonfly-operator.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      containers:
+        - name: {{ .Chart.Name }}-proxy
+          args:
+          - --secure-listen-address=0.0.0.0:{{ .Values.service.port }}
+          - --upstream=http://127.0.0.1:8080/
+          - --logtostderr=true
+          - --v=0
+          image: "{{ .Values.proxyImage.repository }}:{{ .Values.proxyImage.tag }}"
+          ports:
+            - name: https
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          resources:
+            {{- if .Values.proxyResources }}
+            {{- toYaml .Values.proxyResources | nindent 12 }}
+            {{ else }}
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 5m
+              memory: 64Mi
+            {{- end }}
+          securityContext:
+            {{- toYaml .Values.proxySecurityContext | nindent 12 }}
+        - name: {{ .Chart.Name }}-manager
+          args:
+          - --health-probe-bind-address=:{{ .Values.managerHealth.port }}
+          - --metrics-bind-address=127.0.0.1:8080
+          - --leader-elect
+          command:
+          - /manager
+          image: "{{ .Values.managerImage.repository }}:{{ .Values.managerImage.tag }}"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.managerHealth.port }}
+            initialDelaySeconds: {{ .Values.managerHealth.livenessDelay }}
+            periodSeconds: {{ .Values.managerHealth.livenessPeriod }}
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: {{ .Values.managerHealth.port }}
+            initialDelaySeconds: {{ .Values.managerHealth.readinessDelay }}
+            periodSeconds: {{ .Values.managerHealth.readinessPeriod }}
+          resources:
+            {{- if .Values.managerResources }}
+            {{- toYaml .Values.managerResources | nindent 12 }}
+            {{ else }}
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+            {{- end }}
+          securityContext:
+            {{- toYaml .Values.proxySecurityContext | nindent 12 }}
+            
