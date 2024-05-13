@@ -28,7 +28,7 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: 
+podAnnotations:
   kubectl.kubernetes.io/default-container: manager
 
 podLabels: {}
@@ -38,12 +38,12 @@ podSecurityContext:
 
 proxySecurityContext:
   allowPrivilegeEscalation: false
-  capabilities: 
+  capabilities:
     drop:
     - ALL
 managerSecurityContext:
   allowPrivilegeEscalation: false
-  capabilities: 
+  capabilities:
     drop:
     - ALL
 
