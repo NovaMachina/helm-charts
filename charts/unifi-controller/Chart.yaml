@@ -25,3 +25,8 @@ appVersion: "8.1.127-ls46"
 
 maintainers:
   - name: NovaMachina
+
+dependencies:
+  - name: mongodb
+    version: "15.6.0"
+    repository: oci://registry-1.docker.io/bitnamicharts

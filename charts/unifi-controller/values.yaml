@@ -82,6 +82,14 @@ readinessProbe:
   initialDelaySeconds: 5
   periodSeconds: 10
 
+timezone: Etc/UTC
+
+mongodb:
+  secretKeyName: mongo-secret
+  host: mongodb.default.svc.cluster.local
+  port: 27017
+  dbname: unifi
+
 persistence:
   enabled: true
   accessMode: ReadWriteOnce
