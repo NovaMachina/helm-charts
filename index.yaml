@@ -3,6 +3,28 @@ entries:
   dragonfly-operator:
   - apiVersion: v2
     appVersion: 1.1.2
+    created: "2024-05-25T04:13:54.442434942Z"
+    description: A Helm chart for Dragonfly Operator
+    digest: bb9e893b26606643b5e5eed5648b9a775a78e7c27443b7ebec8312ad37a3edfc
+    home: https://www.dragonflydb.io/
+    icon: https://raw.githubusercontent.com/dragonflydb/dragonfly-operator/main/.github/images/logo-full.svg
+    keywords:
+    - dragonfly
+    - dragonflydb
+    - dragonfly-operator
+    - operator
+    kubeVersion: '>=1.26.12'
+    maintainers:
+    - name: NovaMachina
+    name: dragonfly-operator
+    sources:
+    - https://github.com/dragonflydb/dragonfly-operator
+    type: application
+    urls:
+    - https://github.com/NovaMachina/helm-charts/releases/download/dragonfly-operator-0.4.0/dragonfly-operator-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    appVersion: 1.1.2
     created: "2024-05-13T15:45:11.785357326Z"
     description: A Helm chart for Dragonfly Operator
     digest: f0f3ffbff8f72062e494cfa7eec852612be6077397d47f0121f0dfcc5b255ca7
@@ -67,4 +89,4 @@ entries:
     urls:
     - https://github.com/NovaMachina/helm-charts/releases/download/dragonfly-operator-0.1.0/dragonfly-operator-0.1.0.tgz
     version: 0.1.0
-generated: "2024-05-13T15:45:11.7853751Z"
+generated: "2024-05-25T04:13:54.442454458Z"
