@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "unifi-controller.fullname" . }}
+  labels:
+    {{- include "unifi-controller.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "unifi-controller.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "unifi-controller.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "unifi-controller.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: stun
+              containerPort: 3478
+              protocol: UDP
+            - name: syslog
+              containerPort: 5514
+              protocol: UDP
+            - name: speedtest
+              containerPort: 6789
+              protocol: TCP
+            - name: devicecom
+              containerPort: 8080
+              protocol: TCP
+            - name: webadmin
+              containerPort: 8443
+              protocol: TCP
+            - name: httpsredirect
+              containerPort: 8843
+              protocol: TCP
+            - name: httpredirect
+              containerPort: 8880
+              protocol: TCP
+            - name: apdiscovery
+              containerPort: 10001
+              protocol: UDP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: "/config"
+              name: config
+      env:
+        - name: TZ
+          value: {{ .Values.timezone }}
+        - name: MONGO_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.mongodb.secretKeyName }}
+              key: username
+        - name: MONGO_PASS
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.mongodb.secretKeyName }}
+              key: password
+        - name: MONGO_HOST
+          value: {{ .Values.mongodb.host }}
+        - name: MONGO_PORT
+          value: {{ .Values.mongodb.port }}
+        - name: MONGO_DBNAME
+          value: {{ .Values.mongodb.dbname }}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "unifi-controller.fullname" . }}-data
+        {{- else }}
+        - name: config
+          emptyDir: {}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
