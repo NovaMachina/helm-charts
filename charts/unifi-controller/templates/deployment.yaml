@@ -69,7 +69,7 @@ spec:
             - mountPath: "/config"
               name: config
       volumes:
-        {{- if .Values.persistance.enabled }}
+        {{- if .Values.persistence.enabled }}
         - name: config
           persistentVolumeClaim:
             claimName: {{ include "unifi-controller.fullname" . }}-data
