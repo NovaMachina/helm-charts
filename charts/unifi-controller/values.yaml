@@ -86,7 +86,7 @@ persistence:
   enabled: true
   accessMode: ReadWriteOnce
   size: 8Gi
-  storageClass: local-path-retain
+  storageClass: ""
   annotations: {}
 
 nodeSelector: {}
