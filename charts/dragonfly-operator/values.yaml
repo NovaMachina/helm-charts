@@ -10,7 +10,7 @@ proxyImage:
 
 managerImage:
   repository: docker.dragonflydb.io/dragonflydb/operator
-  tag: v1.1.2
+  tag: v1.1.7
 
 nameOverride: ""
 namespaceOverride: ""
